@@ -53,8 +53,6 @@ class PlanController extends BaseController
 
         $data = (new PlansView())->toView($plans, $filterMonthParam, $filterYearParam);
 
-        dd($data);
-
         return response(view('plans', $data));
     }
 

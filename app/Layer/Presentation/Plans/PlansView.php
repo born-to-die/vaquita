@@ -19,11 +19,10 @@ class PlansView
         array $plans,
         ?int $filterMonthParam,
         ?int $filterYearParam
-    ): array
-    {
-        $monthPlanAmount = 0;
-        $monthRealAmount = 0;
-        $monthByPlanAmount = 0;
+    ): array {
+        $monthPlanMoney = 0;
+        $monthRealMoney = 0;
+        $monthRealByPlanMoney = 0;
 
         $plansModels = [];
 
@@ -50,15 +49,10 @@ class PlansView
             $filterDate = new DateTimeImmutable();
         }
 
-        $categories = Category::all();
-        $categoriesByIdMap = [];
+        $expenseTemporaryMoney = 0;
+        $expenseUnplannedMoney = 0;
 
-        foreach ($categories as $category) {
-            $categoriesByIdMap[$category->id] = $category;
-        }
-
-        $temporaryExpensesAmount = 0;
-        $unplannedExpensesAmount = 0;
+        $categoriesMap = $this->getCategories();
 
         foreach ($plans as $plan) {
             $planModel = new Plan();
@@ -71,15 +65,15 @@ class PlansView
 
             $plansModels[] = $planModel;
 
-            $monthPlanAmount += $plan->getPlan();
-            $monthRealAmount += $plan->getReal();
+            $monthPlanMoney += $plan->getPlan();
+            $monthRealMoney += $plan->getReal();
 
-            $monthByPlanAmount += $plan->getReal() > $plan->getPlan()
+            $monthRealByPlanMoney += $plan->getReal() > $plan->getPlan()
                 ? $plan->getPlan()
                 : $plan->getReal();
 
-            if ($categoriesByIdMap[$planModel->category_id]->is_temp === 1) {
-                $temporaryExpensesAmount += $planModel->plan;
+            if ($categoriesMap[$planModel->category_id]['isTemporary']) {
+                $expenseTemporaryMoney += $planModel->plan;
             }
 
             $types = [];
@@ -88,27 +82,47 @@ class PlansView
                 $types[] = $value->value;
 
                 if ($value === PlanType::Unplaned) {
-                    $unplannedExpensesAmount += $plan->getReal();
+                    $expenseUnplannedMoney += $plan->getReal();
                 }
             }
 
             $planModel->types = $types;
         }
 
-        return [
+        $data = [
             'plans' => $plansModels,
-            'monthsNames' => MonthEnum::MONTHS_NAME,
-            'currentMonth' => $filterDate->format("m"),
+
             'currentMonthName' => $filterDate->format("F"),
             'currentYear' => $filterDate->format('Y'),
-            'month_id' => $filterDate,
-            'monthPlanAmount' => $monthPlanAmount,
-            'monthRealAmount' => $monthRealAmount,
-            'monthByPlanAmount' => $monthByPlanAmount,
-            'temporaryExpensesAmount' => $temporaryExpensesAmount,
-            'basicExpensesAmount' => $monthPlanAmount - $temporaryExpensesAmount,
-            'categoriesByIdMap' => $categoriesByIdMap,
-            'unplannedExpensesAmount' => $unplannedExpensesAmount,
+
+            'monthPlanMoney' => $monthPlanMoney,
+            'monthRealMoney' => $monthRealMoney,
+            'monthRealByPlanMoney' => $monthRealByPlanMoney,
+
+            'expenseCategories' => [
+                'temporary' => $expenseTemporaryMoney,
+                'basic' => $monthPlanMoney - $expenseTemporaryMoney,
+                'unplanned' => $expenseUnplannedMoney,
+            ],
+
+            'categoriesMap' => $categoriesMap,
         ];
+
+        return $data;
+    }
+
+    private function getCategories(): array
+    {
+        $categoriesMap = [];
+
+        $categories = Category::all();
+
+        foreach ($categories as $category) {
+            $categoriesMap[$category->id] = [
+                'isTemporary' => $category->is_temp === 1,
+            ];
+        }
+
+        return $categoriesMap;
     }
 }

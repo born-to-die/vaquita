@@ -10,15 +10,15 @@
             </div>
             <div class="row mt-4 mb-4 pb-3 border-3 border-bottom border-muted">
                 <div class="col text-end">
-                    <h4> <u> {{ $monthRealAmount }} </u> </h4>
+                    <h4> <u> {{ $monthRealMoney }} </u> </h4>
                 </div>
                 <div class="col-12 col-md-9 text-start">
                     <div>
                         <div class="progress">
                             <div
-                                class="progress-bar-striped {{ $monthPlanAmount ? (round($monthByPlanAmount / $monthPlanAmount * 100) < 100 ? 'bg-primary' : 'bg-success') : 'bg-secondary'}}"
+                                class="progress-bar-striped {{ $monthPlanMoney ? (round($monthRealByPlanMoney / $monthPlanMoney * 100) < 100 ? 'bg-primary' : 'bg-success') : 'bg-secondary'}}"
                                  role="progressbar"
-                                 style="width: {{ round(($monthByPlanAmount ?:1) / ($monthPlanAmount ?: 1) * 100) }}%"
+                                 style="width: {{ round(($monthRealByPlanMoney ?:1) / ($monthPlanMoney ?: 1) * 100) }}%"
                                  aria-valuenow="30"
                                  aria-valuemin="0"
                                  aria-valuemax="100"
@@ -27,12 +27,12 @@
                     </div>
                     <div class="row">
                         <div class="col pe-5 text-start">
-                            <span> {{ $monthByPlanAmount }} / {{ $monthRealAmount }} </span>
-                            <span class="text-secondary"> {{ round(($monthRealAmount ?:1) / ($monthPlanAmount ?: 1) * 100) }}% </span>
+                            <span> {{ $monthRealByPlanMoney }} / {{ $monthRealMoney }} </span>
+                            <span class="text-secondary"> {{ round(($monthRealMoney ?:1) / ($monthPlanMoney ?: 1) * 100) }}% </span>
                         </div>
                         <div class="col text-end">
-                            <span class="text-secondary"> {{ round(((($monthByPlanAmount ?: 1) - ($monthByPlanAmount - $monthPlanAmount < 0 ? 0 : $monthByPlanAmount - $monthPlanAmount))) / ($monthPlanAmount ?: 1) * 100) }}% </span>
-                            <span> {{ $monthPlanAmount }} </span>
+                            <span class="text-secondary"> {{ round(((($monthRealByPlanMoney ?: 1) - ($monthRealByPlanMoney - $monthPlanMoney < 0 ? 0 : $monthRealByPlanMoney - $monthPlanMoney))) / ($monthPlanMoney ?: 1) * 100) }}% </span>
+                            <span> {{ $monthPlanMoney }} </span>
                         </div>
                     </div>
                     <div class="row text-secondary">
@@ -40,7 +40,7 @@
                             Basic expenses
                         </div>
                         <div class="col text-end">
-                            {{ $basicExpensesAmount }}
+                            {{ $expenseCategories['basic'] }}
                         </div>
                     </div>
                     <div class="row text-secondary">
@@ -48,7 +48,7 @@
                             Temporary expenses
                         </div>
                         <div class="col text-end">
-                            {{ $temporaryExpensesAmount }}
+                            {{ $expenseCategories['temporary'] }}
                         </div>
                     </div>
                     <div class="row text-secondary">
@@ -56,7 +56,7 @@
                             Unplanned expenses
                         </div>
                         <div class="col text-end">
-                            {{ $unplannedExpensesAmount }}
+                            {{ $expenseCategories['unplanned'] }}
                         </div>
                     </div>
                 </div>
@@ -83,7 +83,7 @@
             </div>
             @endif
             @foreach ($plans as $plan)
-                @if ($categoriesByIdMap[$plan->category->id]->is_temp === 0)
+                @if ($categoriesMap[$plan->category->id]['isTemporary'] === false)
                     <div class="row mt-4 rounded shadow border-start border-5 border-primary">
                 @else
                     <div class="row mt-4 rounded shadow border-start border-5 border-secondary">
@@ -101,7 +101,7 @@
                     </div>
                     <div class="col-sm"></div>
                     <div class="col-12 col-sm-3 text-end p-3">
-                        <a href="{{ route('plans-edit', ['id' => $plan->id, 'm' => $month_id]) }}" class="w-50 btn btn-secondary"> <img src="{{ asset('img/pencil-fill.svg') }}"> </a>
+                        <a href="{{ route('plans-edit', ['id' => $plan->id]) }}" class="w-50 btn btn-secondary"> <img src="{{ asset('img/pencil-fill.svg') }}"> </a>
                     </div>
                 </div>
             @endforeach
