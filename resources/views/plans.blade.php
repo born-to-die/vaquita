@@ -89,7 +89,16 @@
                     <div class="row mt-4 rounded shadow border-start border-5 border-secondary">
                 @endif
                     <div class="col-12 col-sm-8 p-3">
-                        <p class="h3"> {{ $plan->category->name }} @if ($plan->real > $plan->plan) ⚠️ @endif</p>
+                        <p class="h3">
+
+                            @if ($plan->category_emoji)
+                                {{ $plan->category_emoji }}
+                            @endif
+
+                            {{ $plan->category->name }}
+
+                            @if ($plan->real > $plan->plan) ⚠️ @endif
+                        </p>
                         <p> {{ $plan->real }} filled out of  <b> {{ $plan->plan }} </b> </p>
                         @foreach ($plan->types as $type)
                             {{ $type }}

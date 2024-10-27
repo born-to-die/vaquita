@@ -63,6 +63,10 @@ class PlansView
             $planModel->plan = $plan->getPlan();
             $planModel->real = $plan->getReal();
             $planModel->desc = $plan->getDesc();
+            
+            $category = Category::findOrFail($plan->getCategoryId());
+
+            $planModel->category_emoji = $category->emoji;
 
             $plansModels[] = $planModel;
 
