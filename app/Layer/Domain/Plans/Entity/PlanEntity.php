@@ -18,6 +18,7 @@ class PlanEntity
         private string $updatedAt,
         private ?string $deletedAt,
         private array $types,
+        private ?string $desc,
     ) {
     }
 
@@ -54,5 +55,10 @@ class PlanEntity
     public function getTypes(): array
     {
         return $this->types;
+    }
+
+    public function getDesc(): ?string
+    {
+        return $this->desc;
     }
 }

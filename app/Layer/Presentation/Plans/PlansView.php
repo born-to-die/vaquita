@@ -62,6 +62,7 @@ class PlansView
             $planModel->category_id = $plan->getCategoryId();
             $planModel->plan = $plan->getPlan();
             $planModel->real = $plan->getReal();
+            $planModel->desc = $plan->getDesc();
 
             $plansModels[] = $planModel;
 

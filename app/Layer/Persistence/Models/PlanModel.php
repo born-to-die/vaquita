@@ -30,7 +30,8 @@ class PlanModel
             $plan->created_at,
             $plan->updated_at,
             $plan->deleted_at,
-            $types
+            $types,
+            $plan->desc,
         );
     }
 }

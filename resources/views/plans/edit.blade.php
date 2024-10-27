@@ -68,6 +68,18 @@
                                 </div>
                             </div> 
                         </div>
+                        <div class="col-12 col-sm">
+                            <label for="plan-desc" class="form-label"> Описание: </label>
+                            <div class="row">
+                                <div class="col-12 col-sm">
+                                    <textarea 
+                                        class="form-control" 
+                                        id="plan-desc" 
+                                        name="desc" 
+                                    >{{ $plan->desc }}</textarea>
+                                </div>
+                            </div> 
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-12 col-sm mt-1 col-sm text-start">

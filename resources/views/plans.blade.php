@@ -98,6 +98,9 @@
                             <div class="progress-bar-striped {{ $plan->plan ? (round($plan->real / ($plan->plan  ?: 1) * 100) < 100 ? 'bg-primary' : 'bg-success') : 'bg-warning'}}" role="progressbar" style="width: {{ round(($plan->real ?:1) / ($plan->plan ?: 1) * 100) }}%"
                                 aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
+                        @if ($plan->desc)
+                            <div><pre class="w-100 mt-2">{{ $plan->desc }}</pre></div>
+                        @endif                        
                     </div>
                     <div class="col-sm"></div>
                     <div class="col-12 col-sm-3 text-end p-3">

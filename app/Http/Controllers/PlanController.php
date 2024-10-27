@@ -96,6 +96,7 @@ class PlanController extends BaseController
             'category_id' => $request->category_id,
             'plan' => $request->plan,
             'real' => $request->real,
+            'desc' => $request->desc,
         ];
 
         $this->updatePlanUseCase->update($id, $data);
