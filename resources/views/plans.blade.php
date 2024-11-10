@@ -2,17 +2,45 @@
 
 <body>
     @include('menu')
-    <div class="row px-5 pt-3">
+    <div class="row px-5 pt-3 bg-dark text-light">
         <div class="col col-xxl"> </div>
-        <div class="col-12 col-xxl-6">
+        <div class="col-12 col-xxl-8">
             <div class="text-center">
                 <h1> {{ $currentMonthName }} {{ $currentYear }} </h1>
             </div>
-            <div class="row mt-4 mb-4 pb-3 border-3 border-bottom border-muted">
-                <div class="col text-end">
-                    <h4> <u> {{ $monthRealMoney }} </u> </h4>
+            <div class="row mt-4 mb-4 pb-3 border-bottom border-secondary ">
+                <div class="col text-end text-monospace shadow m-1 p-3 border border-secondary rounded">
+                    <div class="row pb-2">
+                        <div class="col text-light">
+                            <span class="h2" title="Total spent"> <b> {{ number_format($monthRealMoney, 0, null, ' ') }} 🪙 </b> </span>
+                        </div>
+                    </div>
+                    <div class="row text-muted">
+                        <div class="col-1 text-start">
+                            <span class="h3"> P </span>
+                        </div>
+                        <div class="col">
+                            <span class="h3" title="Planned expenses"> {{ number_format($monthPlanMoney, 0, null, ' ') }} ¤ </span>
+                        </div>
+                    </div>
+                    <div class="row text-muted">
+                        <div class="col-1 text-start">
+                            <span class="h3"> W </span>
+                        </div>
+                        <div class="col">
+                            <span class="h4 text-muted" title="Spent within plan"> {{ number_format($monthRealByPlanMoney, 0, null, ' ') }} ¤ </span>
+                        </div>
+                    </div>
+                    <div class="row text-muted">
+                        <div class="col-1 text-start">
+                            <span class="h3"> O </span>
+                        </div>
+                        <div class="col">
+                            <span class="h5 text-muted" title="Spent outside of plan"> {{ number_format($monthRealMoney - $monthRealByPlanMoney, 0, null, ' ') }} ¤ </span>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-12 col-md-9 text-start">
+                <div class="col-12 col-xxl-7 text-start shadow border border-secondary rounded m-1 p-3">
                     <div>
                         <div class="progress">
                             <div
@@ -26,13 +54,13 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col pe-5 text-start">
-                            <span> {{ $monthRealByPlanMoney }} / {{ $monthRealMoney }} </span>
+                        <div class="col pe- text-start">
+                            <span title="Total spent"> {{ number_format($monthRealMoney, 0, null, ' ') }} ¤ </span>
                             <span class="text-secondary"> {{ round(($monthRealMoney ?:1) / ($monthPlanMoney ?: 1) * 100) }}% </span>
                         </div>
                         <div class="col text-end">
                             <span class="text-secondary"> {{ round(((($monthRealByPlanMoney ?: 1) - ($monthRealByPlanMoney - $monthPlanMoney < 0 ? 0 : $monthRealByPlanMoney - $monthPlanMoney))) / ($monthPlanMoney ?: 1) * 100) }}% </span>
-                            <span> {{ $monthPlanMoney }} </span>
+                            <span title="Planned expenses"> {{ number_format($monthPlanMoney, 0, null, ' ') }} ¤ </span>
                         </div>
                     </div>
                     <div class="row text-secondary">
@@ -40,7 +68,7 @@
                             Basic expenses
                         </div>
                         <div class="col text-end">
-                            {{ $expenseCategories['basic'] }}
+                            {{ $expenseCategories['basic'] }} ¤
                         </div>
                     </div>
                     <div class="row text-secondary">
@@ -48,7 +76,7 @@
                             Temporary expenses
                         </div>
                         <div class="col text-end">
-                            {{ $expenseCategories['temporary'] }}
+                            {{ $expenseCategories['temporary'] }} ¤
                         </div>
                     </div>
                     <div class="row text-secondary">
@@ -56,11 +84,11 @@
                             Unplanned expenses
                         </div>
                         <div class="col text-end">
-                            {{ $expenseCategories['unplanned'] }}
+                            {{ $expenseCategories['unplanned'] }}¤
                         </div>
                     </div>
                 </div>
-                <div class="col text-end">
+                <div class="col text-end m-1 p-3 shadow border border-secondary rounded">
                     <div class="row mb-1">
                         <a class="btn btn-success" href="{{ route('plans-create') }}"> <span class="h5">+</span> Add plan </a>
                     </div>
@@ -89,7 +117,7 @@
                     <div class="row mt-4 rounded shadow border-start border-5 border-secondary">
                 @endif
                     <div class="col-12 col-sm-8 p-3">
-                        <p class="h3">
+                        <span class="h3">
 
                             @if ($plan->category_emoji)
                                 {{ $plan->category_emoji }}
@@ -98,8 +126,13 @@
                             {{ $plan->category->name }}
 
                             @if ($plan->real > $plan->plan) ⚠️ @endif
-                        </p>
-                        <p> {{ $plan->real }} filled out of  <b> {{ $plan->plan }} </b> </p>
+
+                            @if ($plan->category->name === "Foundation")
+                                {{ round($plan->real * 100 / $monthRealMoney) }} % /
+                                {{ round($plan->plan * 100 / $monthPlanMoney) }} %
+                            @endif
+                        </span>
+                        <p class="pt-2"> {{ $plan->real }} filled out of  <b> {{ $plan->plan }} </b> </p>
                         @foreach ($plan->types as $type)
                             {{ $type }}
                         @endforeach
