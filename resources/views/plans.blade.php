@@ -9,8 +9,11 @@
                 <h1> {{ $currentMonthName }} {{ $currentYear }} </h1>
             </div>
             <div class="row mt-4 mb-4 pb-3 border-bottom border-secondary ">
-                <div class="col text-end text-monospace shadow m-1 p-3 border border-secondary rounded">
+                <div class="col-12 col-xl-auto text-end text-monospace shadow m-1 p-3 border border-secondary rounded">
                     <div class="row pb-2">
+                        <div class="col-1 text-start">
+                            <span class="h2 text-secondary"> {{ round(($monthRealMoney ?:1) / ($monthPlanMoney ?: 1) * 100) }}% </span>
+                        </div>
                         <div class="col text-light">
                             <span class="h2" title="Total spent"> <b> {{ number_format($monthRealMoney, 0, null, ' ') }} 🪙 </b> </span>
                         </div>
@@ -33,14 +36,14 @@
                     </div>
                     <div class="row text-muted">
                         <div class="col-1 text-start">
-                            <span class="h3"> O </span>
+                            <span class="h5"> O </span>
                         </div>
                         <div class="col">
                             <span class="h5 text-muted" title="Spent outside of plan"> {{ number_format($monthRealMoney - $monthRealByPlanMoney, 0, null, ' ') }} ¤ </span>
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-xxl-7 text-start shadow border border-secondary rounded m-1 p-3">
+                <div class="col-12 col-xl-6 text-start shadow border border-secondary rounded m-1 p-3">
                     <div>
                         <div class="progress">
                             <div
@@ -56,7 +59,7 @@
                     <div class="row">
                         <div class="col pe- text-start">
                             <span title="Total spent"> {{ number_format($monthRealMoney, 0, null, ' ') }} ¤ </span>
-                            <span class="text-secondary"> {{ round(($monthRealMoney ?:1) / ($monthPlanMoney ?: 1) * 100) }}% </span>
+                            <span class="text-secondary" title="Total percentage of spending from plan"> | {{ round(($monthRealMoney ?:1) / ($monthPlanMoney ?: 1) * 100) }}% </span>
                         </div>
                         <div class="col text-end">
                             <span class="text-secondary"> {{ round(((($monthRealByPlanMoney ?: 1) - ($monthRealByPlanMoney - $monthPlanMoney < 0 ? 0 : $monthRealByPlanMoney - $monthPlanMoney))) / ($monthPlanMoney ?: 1) * 100) }}% </span>
@@ -88,7 +91,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col text-end m-1 p-3 shadow border border-secondary rounded">
+                <div class="col-12 col-xl-2 text-end m-1 p-3 shadow border border-secondary rounded">
                     <div class="row mb-1">
                         <a class="btn btn-success" href="{{ route('plans-create') }}"> <span class="h5">+</span> Add plan </a>
                     </div>
