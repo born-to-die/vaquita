@@ -114,7 +114,7 @@
             </div>
             @endif
             @foreach ($plans as $plan)
-                @if ($categoriesMap[$plan->category->id]['isTemporary'] === false)
+                @if ($categoriesMap[$plan['category_id']]['isTemporary'] === false)
                     <div class="row mt-4 rounded shadow border-start border-5 border-primary">
                 @else
                     <div class="row mt-4 rounded shadow border-start border-5 border-secondary">
@@ -122,44 +122,41 @@
                     <div class="col-12 col-sm-8 p-3">
                         <span class="h3">
 
-                            @if ($plan->category_emoji)
-                                {{ $plan->category_emoji }}
+                            @if ($plan['category_emoji'])
+                                {{ $plan['category_emoji'] }}
                             @endif
 
-                            {{ $plan->category->name }}
+                            {{ $categoriesMap[$plan['category_id']]['name'] }}
 
-                            @if ($plan->real > $plan->plan) ⚠️ @endif
+                            @if ($plan['real'] > $plan['plan']) ⚠️ @endif
 
-                            @if ($plan->category->name === "Foundation")
-                                {{ round($plan->real * 100 / ($monthRealMoney == 0 ? 1 : $monthRealMoney)) }} % /
-                                {{ round($plan->plan * 100 / ($monthPlanMoney == 0 ? 1 : $monthPlanMoney)) }} %
+                            @if ($categoriesMap[$plan['category_id']]['name'] === "Foundation")
+                                {{ round($plan['real'] * 100 / ($monthRealMoney == 0 ? 1 : $monthRealMoney)) }} % /
+                                {{ round($plan['plan'] * 100 / ($monthPlanMoney == 0 ? 1 : $monthPlanMoney)) }} %
                             @endif
                         </span>
-                        <p class="pt-2"> {{ $plan->real }} filled out of  <b> {{ $plan->plan }} </b> </p>
-                        @foreach ($plan->types as $type)
-                            {{ $type }}
-                        @endforeach
+                        <p class="pt-2"> {{ $plan['real'] }} filled out of  <b> {{ $plan['plan'] }} </b> </p>
                         <div class="progress">
                             <div
-                                @if ($plan->real >= $plan->plan && $plan->plan === 0)
+                                @if ($plan['real'] >= $plan['plan'] && $plan['plan'] === 0)
                                     class="progress-bar bg-danger"
-                                @elseif ($plan->real > $plan->plan && $plan->plan !== 0)
+                                @elseif ($plan['real'] > $plan['plan'] && $plan['plan'] !== 0)
                                     class="progress-bar bg-warning"
-                                @elseif ($plan->real < $plan->plan)
+                                @elseif ($plan['real'] < $plan['plan'])
                                     class="progress-bar-striped progress-bar-animated bg-primary"
                                 @else
                                     class="progress-bar bg-success"
                                 @endif
-                                role="progressbar" style="width: {{ round(($plan->real ?:1) / ($plan->plan ?: 1) * 100) }}%"
+                                role="progressbar" style="width: {{ round(($plan['real'] ?:1) / ($plan['plan'] ?: 1) * 100) }}%"
                                 aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                        @if ($plan->desc)
-                            <div><pre class="w-100 mt-2">{{ $plan->desc }}</pre></div>
+                        @if ($plan['desc'])
+                            <div><pre class="w-100 mt-2">{{ $plan['desc'] }}</pre></div>
                         @endif                        
                     </div>
                     <div class="col-sm"></div>
                     <div class="col-12 col-sm-3 text-end p-3">
-                        <a href="{{ route('plans-edit', ['id' => $plan->id]) }}" class="w-50 btn btn-secondary"> <img src="{{ asset('img/pencil-fill.svg') }}"> </a>
+                        <a href="{{ route('plans-edit', ['id' => $plan['id']]) }}" class="w-50 btn btn-secondary"> <img src="{{ asset('img/pencil-fill.svg') }}"> </a>
                     </div>
                 </div>
             @endforeach

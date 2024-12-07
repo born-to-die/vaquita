@@ -2,9 +2,7 @@
 
 namespace App\Layer\Presentation\Plans;
 
-use App\Models\Plan;
 use App\Models\Category;
-use App\Layer\Domain\Common\MonthEnum;
 use DateTimeImmutable;
 use App\Layer\Domain\Plans\Entity\PlanEntity;
 use App\Layer\Domain\Plans\Entity\PlanType;
@@ -13,62 +11,42 @@ class PlansView
 {
     /**
      * @param PlanEntity[] $plans
-     * @return Plan[]
      */
     static public function toView(
         array $plans,
-        ?int $filterMonthParam,
-        ?int $filterYearParam
+        ?int $specifyMonthNumber,
+        ?int $specifyYearNumber
     ): array {
+        $plansData = [];
+
         $monthPlanMoney = 0;
         $monthRealMoney = 0;
         $monthRealByPlanMoney = 0;
 
-        $plansModels = [];
+         $date = self::getDate($specifyMonthNumber, $specifyYearNumber);
 
-        $filterMonth = null;
-        $filterYear = null;
-        $filterDate = null;
-
-        if ($filterMonthParam) {
-            $filterMonth = (int) $filterMonthParam < 10
-                ? "0$filterMonthParam"
-                : (string) $filterMonthParam;
-        }
-
-        if ($filterYearParam) {
-            $filterYear = $filterYearParam;
-        }
-
-        if ($filterMonth && $filterYear) {
-            $filterDate = new DateTimeImmutable("$filterYear-$filterMonth-01");
-        } elseif ($filterMonth) {
-            $nowDate = new DateTimeImmutable();
-            $filterDate = new DateTimeImmutable($nowDate->format('Y') . "-$filterMonth-01");
-        } else {
-            $filterDate = new DateTimeImmutable();
-        }
-
+        // TODO Move to categories system (or types?)
         $expenseTemporaryMoney = 0;
         $expenseUnplannedMoney = 0;
 
-        $categoriesMap = $this->getCategories();
+        $categoriesMap = self::getCategories();
 
         foreach ($plans as $plan) {
-            $planModel = new Plan();
-            $planModel->id = $plan->getId();
-            $planModel->user_id = $plan->getUserId();
-            $planModel->month_id = $plan->getMonthId();
-            $planModel->category_id = $plan->getCategoryId();
-            $planModel->plan = $plan->getPlan();
-            $planModel->real = $plan->getReal();
-            $planModel->desc = $plan->getDesc();
-            
+            // TODO Dont use external functions for get data
             $category = Category::findOrFail($plan->getCategoryId());
 
-            $planModel->category_emoji = $category->emoji;
-
-            $plansModels[] = $planModel;
+            $plansData[] = [
+                "id" => $plan->getId(),
+                "user_id" => $plan->getUserId(),
+                "month_id" => $plan->getMonthId(),
+                "category_id" => $plan->getCategoryId(),
+                "plan" => $plan->getPlan(),
+                "real" => $plan->getReal(),
+                "desc" => $plan->getDesc(),
+                "category_emoji" => $category->emoji,
+            ];
+            
+            $category = Category::findOrFail($plan->getCategoryId());
 
             $monthPlanMoney += $plan->getPlan();
             $monthRealMoney += $plan->getReal();
@@ -77,8 +55,8 @@ class PlansView
                 ? $plan->getPlan()
                 : $plan->getReal();
 
-            if ($categoriesMap[$planModel->category_id]['isTemporary']) {
-                $expenseTemporaryMoney += $planModel->plan;
+            if ($categoriesMap[$plan->getCategoryId()]['isTemporary']) {
+                $expenseTemporaryMoney += $plan->getPlan();
             }
 
             $types = [];
@@ -90,15 +68,13 @@ class PlansView
                     $expenseUnplannedMoney += $plan->getReal();
                 }
             }
-
-            $planModel->types = $types;
         }
 
         $data = [
-            'plans' => $plansModels,
+            'plans' => $plansData,
 
-            'currentMonthName' => $filterDate->format("F"),
-            'currentYear' => $filterDate->format('Y'),
+            'currentMonthName' => $date->format("F"),
+            'currentYear' => $date->format('Y'),
 
             'monthPlanMoney' => $monthPlanMoney,
             'monthRealMoney' => $monthRealMoney,
@@ -116,18 +92,36 @@ class PlansView
         return $data;
     }
 
-    private function getCategories(): array
+    static private function getCategories(): array
     {
         $categoriesMap = [];
 
-        $categories = Category::all();
-
-        foreach ($categories as $category) {
+        foreach (Category::all() as $category) {
             $categoriesMap[$category->id] = [
                 'isTemporary' => $category->is_temp === 1,
+                'name' => $category->name,
             ];
         }
 
         return $categoriesMap;
     }
+
+    static private function getDate(
+        ?int $specifyMonthNumber,
+        ?int $specifyYearNumber,
+    ): DateTimeImmutable {
+        $currentDate = new DateTimeImmutable();
+    
+
+        $year = $specifyYearNumber ?? $currentDate->format('Y');
+
+        $month = $specifyMonthNumber ? str_pad($specifyMonthNumber, 2, '0', STR_PAD_LEFT) : null;
+    
+        if ($month) {
+            return new DateTimeImmutable("$year-$month-01");
+        }
+    
+        return $currentDate;
+    }
+    
 }

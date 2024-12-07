@@ -51,7 +51,7 @@ class PlanController extends BaseController
 
         $plans = $this->getPlansUseCase->run($filterMonthParam, $filterYearParam);
 
-        $data = (new PlansView())->toView($plans, $filterMonthParam, $filterYearParam);
+        $data = PlansView::toView($plans, $filterMonthParam, $filterYearParam);
 
         return response(view('plans', $data));
     }
