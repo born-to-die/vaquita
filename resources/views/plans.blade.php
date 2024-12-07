@@ -1,8 +1,8 @@
 @include('common/head')
 
-<body>
+<body class="bg-dark text-light">
     @include('menu')
-    <div class="row px-5 pt-3 bg-dark text-light">
+    <div class="row px-5 pt-3">
         <div class="col col-xxl"> </div>
         <div class="col-12 col-xxl-8">
             <div class="text-center">
@@ -47,7 +47,7 @@
                     <div>
                         <div class="progress">
                             <div
-                                class="progress-bar-striped {{ $monthPlanMoney ? (round($monthRealByPlanMoney / $monthPlanMoney * 100) < 100 ? 'bg-primary' : 'bg-success') : 'bg-secondary'}}"
+                                class="progress-bar progress-bar-striped progress-bar-animated {{ $monthPlanMoney ? (round($monthRealByPlanMoney / $monthPlanMoney * 100) < 100 ? 'bg-primary' : 'bg-success') : 'bg-secondary'}}"
                                  role="progressbar"
                                  style="width: {{ round(($monthRealByPlanMoney ?:1) / ($monthPlanMoney ?: 1) * 100) }}%"
                                  aria-valuenow="30"
@@ -62,7 +62,7 @@
                             <span class="text-secondary" title="Total percentage of spending from plan"> | {{ round(($monthRealMoney ?:1) / ($monthPlanMoney ?: 1) * 100) }}% </span>
                         </div>
                         <div class="col text-end">
-                            <span class="text-secondary"> {{ round(((($monthRealByPlanMoney ?: 1) - ($monthRealByPlanMoney - $monthPlanMoney < 0 ? 0 : $monthRealByPlanMoney - $monthPlanMoney))) / ($monthPlanMoney ?: 1) * 100) }}% </span>
+                            <span class="text-secondary"> {{ round(((($monthRealByPlanMoney ?: 1) - ($monthRealByPlanMoney - $monthPlanMoney < 0 ? 0 : $monthRealByPlanMoney - $monthPlanMoney))) / ($monthPlanMoney ?: 1) * 100) }}% |</span>
                             <span title="Planned expenses"> {{ number_format($monthPlanMoney, 0, null, ' ') }} ¤ </span>
                         </div>
                     </div>
@@ -87,7 +87,7 @@
                             Unplanned expenses
                         </div>
                         <div class="col text-end">
-                            {{ $expenseCategories['unplanned'] }}¤
+                            {{ $expenseCategories['unplanned'] }} ¤
                         </div>
                     </div>
                 </div>
@@ -131,8 +131,8 @@
                             @if ($plan->real > $plan->plan) ⚠️ @endif
 
                             @if ($plan->category->name === "Foundation")
-                                {{ round($plan->real * 100 / $monthRealMoney) }} % /
-                                {{ round($plan->plan * 100 / $monthPlanMoney) }} %
+                                {{ round($plan->real * 100 / ($monthRealMoney == 0 ? 1 : $monthRealMoney)) }} % /
+                                {{ round($plan->plan * 100 / ($monthPlanMoney == 0 ? 1 : $monthPlanMoney)) }} %
                             @endif
                         </span>
                         <p class="pt-2"> {{ $plan->real }} filled out of  <b> {{ $plan->plan }} </b> </p>
@@ -140,7 +140,17 @@
                             {{ $type }}
                         @endforeach
                         <div class="progress">
-                            <div class="progress-bar-striped {{ $plan->plan ? (round($plan->real / ($plan->plan  ?: 1) * 100) < 100 ? 'bg-primary' : 'bg-success') : 'bg-warning'}}" role="progressbar" style="width: {{ round(($plan->real ?:1) / ($plan->plan ?: 1) * 100) }}%"
+                            <div
+                                @if ($plan->real >= $plan->plan && $plan->plan === 0)
+                                    class="progress-bar bg-danger"
+                                @elseif ($plan->real > $plan->plan && $plan->plan !== 0)
+                                    class="progress-bar bg-warning"
+                                @elseif ($plan->real < $plan->plan)
+                                    class="progress-bar-striped progress-bar-animated bg-primary"
+                                @else
+                                    class="progress-bar bg-success"
+                                @endif
+                                role="progressbar" style="width: {{ round(($plan->real ?:1) / ($plan->plan ?: 1) * 100) }}%"
                                 aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         @if ($plan->desc)

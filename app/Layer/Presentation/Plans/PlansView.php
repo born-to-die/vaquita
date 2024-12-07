@@ -12,10 +12,10 @@ use App\Layer\Domain\Plans\Entity\PlanType;
 class PlansView
 {
     /**
-     * @property PlanEntity[] $plans
+     * @param PlanEntity[] $plans
      * @return Plan[]
      */
-    public function toView(
+    static public function toView(
         array $plans,
         ?int $filterMonthParam,
         ?int $filterYearParam
