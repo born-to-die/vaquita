@@ -97,6 +97,7 @@ class PlanController extends BaseController
             'plan' => $request->plan,
             'real' => $request->real,
             'desc' => $request->desc,
+            'completed' => (bool) $request->is_completed,
         ];
 
         $this->updatePlanUseCase->update($id, $data);

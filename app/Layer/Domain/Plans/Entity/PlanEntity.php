@@ -19,6 +19,7 @@ class PlanEntity
         private ?string $deletedAt,
         private array $types,
         private ?string $desc,
+        private ?bool $isCompleted,
     ) {
     }
 
@@ -60,5 +61,10 @@ class PlanEntity
     public function getDesc(): ?string
     {
         return $this->desc;
+    }
+
+    public function isCompleted(): bool
+    {
+        return $this->isCompleted ?? false;
     }
 }

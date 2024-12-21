@@ -4,7 +4,7 @@
     @include('menu')
     <div class="row px-5 pt-3">
         <div class="col col-xxl"> </div>
-        <div class="col-12 col-xxl-8">
+        <div class="col-auto col-xxl-9">
             <div class="text-center">
                 <h1> {{ $currentMonthName }} {{ $currentYear }} </h1>
             </div>
@@ -113,13 +113,14 @@
                 </div>
             </div>
             @endif
+            <div class="row">
             @foreach ($plans as $plan)
                 @if ($categoriesMap[$plan['category_id']]['isTemporary'] === false)
-                    <div class="row mt-4 rounded shadow border-start border-5 border-primary">
+                    <div class="col-12 col-sm-5 col-md-3 col-lg-2 col-xl-2 my-3 mx-3 rounded shadow border-start border-5 border-primary">
                 @else
-                    <div class="row mt-4 rounded shadow border-start border-5 border-secondary">
+                    <div class="col-12 col-sm-5 col-md-3 col-lg-2 col-xl-2 my-3 mx-3 rounded shadow border-start border-5 border-secondary">
                 @endif
-                    <div class="col-12 col-sm-8 p-3">
+                    <div>
                         <span class="h3">
 
                             @if ($plan['category_emoji'])
@@ -127,8 +128,6 @@
                             @endif
 
                             {{ $categoriesMap[$plan['category_id']]['name'] }}
-
-                            @if ($plan['real'] > $plan['plan']) ⚠️ @endif
 
                             @if ($categoriesMap[$plan['category_id']]['name'] === "Foundation")
                                 {{ round($plan['real'] * 100 / ($monthRealMoney == 0 ? 1 : $monthRealMoney)) }} % /
@@ -138,28 +137,49 @@
                         <p class="pt-2"> {{ $plan['real'] }} filled out of  <b> {{ $plan['plan'] }} </b> </p>
                         <div class="progress">
                             <div
-                                @if ($plan['real'] >= $plan['plan'] && $plan['plan'] === 0)
-                                    class="progress-bar bg-danger"
+                                @if ($plan['is_completed'] && $plan['real'] === $plan['plan'])
+                                    class="progress-bar bg-success"
+                                @elseif ($plan['is_completed'] && $plan['real'] < $plan['plan'])
+                                    class="progress-bar bg-success"
+                                @elseif ($plan['plan'] === 0)
+                                    class="progress-bar bg-danger text-dark"
                                 @elseif ($plan['real'] > $plan['plan'] && $plan['plan'] !== 0)
-                                    class="progress-bar bg-warning"
+                                    class="progress-bar bg-warning text-dark"
                                 @elseif ($plan['real'] < $plan['plan'])
-                                    class="progress-bar-striped progress-bar-animated bg-primary"
+                                    class="progress-bar progress-bar-striped progress-bar-animated bg-primary"
                                 @else
                                     class="progress-bar bg-success"
                                 @endif
                                 role="progressbar" style="width: {{ round(($plan['real'] ?:1) / ($plan['plan'] ?: 1) * 100) }}%"
-                                aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+                                aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"
+                            > {{ $plan['plan'] > 0 ? round(($plan['real'] ?:1) / ($plan['plan'] ?: 1) * 100) : 100 }}% </div>
+                        
+                            @if ($plan['is_completed'] && $plan['real'] < $plan['plan'])
+                                
+                            @endif
+
+                            @if ($plan['real'] < $plan['plan'])
+                                <div
+                                    @if ($plan['is_completed'] && $plan['real'] < $plan['plan'])
+                                        class="progress-bar bg-secondary"
+                                    @else
+                                        class="progress-bar progress-bar-striped bg-dark"
+                                    @endif
+                                    role="progressbar"
+                                    style="width: {{ 100 - round(($plan['real'] ?:1) / ($plan['plan'] ?: 1) * 100) }}%"
+                                > {{ 100 - round(($plan['real'] ?:1) / ($plan['plan'] ?: 1) * 100) }}% </div>
+                            @endif
                         </div>
                         @if ($plan['desc'])
                             <div><pre class="w-100 mt-2">{{ $plan['desc'] }}</pre></div>
                         @endif                        
                     </div>
-                    <div class="col-sm"></div>
-                    <div class="col-12 col-sm-3 text-end p-3">
-                        <a href="{{ route('plans-edit', ['id' => $plan['id']]) }}" class="w-50 btn btn-secondary"> <img src="{{ asset('img/pencil-fill.svg') }}"> </a>
+                    <div>
+                        <a href="{{ route('plans-edit', ['id' => $plan['id']]) }}" class="btn btn-secondary"> <img src="{{ asset('img/pencil-fill.svg') }}"> </a>
                     </div>
                 </div>
             @endforeach
+            </div>
         </div>
         <div class="col col-xxl"> </div>
     </div>

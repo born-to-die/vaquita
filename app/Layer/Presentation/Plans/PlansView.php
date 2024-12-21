@@ -44,6 +44,7 @@ class PlansView
                 "real" => $plan->getReal(),
                 "desc" => $plan->getDesc(),
                 "category_emoji" => $category->emoji,
+                "is_completed" => $plan->isCompleted(),
             ];
             
             $category = Category::findOrFail($plan->getCategoryId());

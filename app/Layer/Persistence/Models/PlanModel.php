@@ -32,6 +32,7 @@ class PlanModel
             $plan->deleted_at,
             $types,
             $plan->desc,
+            $plan->completed,
         );
     }
 }

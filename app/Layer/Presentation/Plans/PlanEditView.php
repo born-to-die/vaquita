@@ -23,6 +23,7 @@ class PlanEditView
             'monthsNames' => MonthEnum::MONTHS_NAME,
             'categories' => Category::select('id', 'name')->get(),
             'missingAmount' => $plan->getPlan() - $plan->getReal(),
+            'is_completed' => $plan->isCompleted(),
         ];
     }
 }

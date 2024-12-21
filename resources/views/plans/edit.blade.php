@@ -11,7 +11,7 @@
                 <form action="{{ route('plans-update', $plan->id) }}" method="POST">
                     @csrf
                     @method('PUT')
-                    <div class="mb-3">
+                    <div class="mb-3" style="display: none">
                         <label class="form-label"> Пользователь </label>
                         <select class="form-select" name="user_id" required>
                             <option disabled> Выберите пользователя </option>
@@ -24,44 +24,46 @@
                             @endforeach
                           </select>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label"> Дата </label>
-                        <select class="form-select" name="month_id" required>
-                            <option disabled> Выберите дату </option>
-                            @foreach ($months as $month)
-                                @if ($month->id == $plan->month_id)
-                                    <option value="{{ $month->id }}" selected> {{ $monthsNames[$month->month - 1] }} {{ $month->year }} </option>
-                                @else
-                                    <option value="{{ $month->id }}"> {{ $monthsNames[$month->month - 1] }} {{ $month->year }} </option>
-                                @endif
-                            @endforeach
-                          </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label"> Категория </label>
-                        <select class="form-select" name="category_id" required>
-                            <option disabled> Выберите категорию </option>
-                            @foreach ($categories as $category)
-                                @if ($category->id == $plan->category_id)
-                                    <option value="{{ $category->id }}" selected> {{ $category->name }} </option>
-                                @else
-                                    <option value="{{ $category->id }}"> {{ $category->name }} </option>
-                                @endif
-                            @endforeach
-                          </select>
+                    <div class="row">
+                        <div class="col-12 col-sm-6 mb-3">
+                            <label class="form-label"> Дата </label>
+                            <select class="form-select" name="month_id" required>
+                                <option disabled> Выберите дату </option>
+                                @foreach ($months as $month)
+                                    @if ($month->id == $plan->month_id)
+                                        <option value="{{ $month->id }}" selected> {{ $monthsNames[$month->month - 1] }} {{ $month->year }} </option>
+                                    @else
+                                        <option value="{{ $month->id }}"> {{ $monthsNames[$month->month - 1] }} {{ $month->year }} </option>
+                                    @endif
+                                @endforeach
+                              </select>
+                        </div>
+                        <div class="col-12 col-sm-6 mb-3">
+                            <label class="form-label"> Категория </label>
+                            <select class="form-select" name="category_id" required>
+                                <option disabled> Выберите категорию </option>
+                                @foreach ($categories as $category)
+                                    @if ($category->id == $plan->category_id)
+                                        <option value="{{ $category->id }}" selected> {{ $category->name }} </option>
+                                    @else
+                                        <option value="{{ $category->id }}"> {{ $category->name }} </option>
+                                    @endif
+                                @endforeach
+                              </select>
+                        </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-12 col-sm">
+                        <div class="col-12 col-sm-6">
                             <label for="plan-value" class="form-label"> План </label>
                             <input type="number" class="form-control" id="plan-value" name="plan" value="{{ $plan->plan }}" min="0" required>
                         </div>
-                        <div class="col-12 col-sm">
+                        <div class="col-12 col-sm-6">
                             <label for="plan-real" class="form-label"> Факт: <span class="{{ $missingAmount > 0 ? "text-danger" : "text-success" }}"> {{ $missingAmount ? "не хватает " . $missingAmount : " выполнено"}} </span> </label>
                             <div class="row">
-                                <div class="col-12 col-sm">
+                                <div class="col-12 col-sm-7">
                                     <input type="number" class="form-control" id="plan-real" name="real" value="{{ $plan->real }}" min="0" required>
                                 </div>
-                                <div class="col-12 col-sm">
+                                <div class="col-12 col-sm-5">
                                     <button type="button" id="fillFactButton" class="btn btn-success"> 
                                         <i class="bi bi-clipboard2-check-fill"></i> Заполнить
                                     </button>
@@ -77,6 +79,25 @@
                                         id="plan-desc" 
                                         name="desc" 
                                     >{{ $plan->desc }}</textarea>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="col-12 col-sm">
+                            <div class="row">
+                                <div class="col-12 col-sm h4 text-end pe-5 pt-3">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        id="is_completed"
+                                        name="is_completed"
+                                        @if ($plan->is_completed)
+                                            checked
+                                        @endif
+                                    >
+                                    <label
+                                        class="form-check-label"
+                                        for="is_completed"
+                                    > Completed </label>
                                 </div>
                             </div> 
                         </div>
