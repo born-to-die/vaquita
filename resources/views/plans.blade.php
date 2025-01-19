@@ -124,7 +124,11 @@
             <div class="rowbg-white p-3">
                 <div class="row h2 text-muted">
                     <div class="col text-start"> ◆ Basic expenses </div>
-                    <div class="col text-end"> {{ number_format($expenseCategories['basic'], 0, null, ' ') }} ¤ </div>
+                    <div class="col text-end"> 
+                        {{ number_format($expenseCategories['basic'], 0, null, ' ') }} ¤ 
+                        |
+                        {{ $expenseCategories['basicPercent'] }}%
+                    </div>
                 </div>
                 <div class="row"> <hr> </div>
             </div>
@@ -147,7 +151,14 @@
                                     {{ round($plan['plan'] * 100 / ($monthPlanMoney == 0 ? 1 : $monthPlanMoney)) }} %
                                 @endif
                             </span>
-                            <p class="pt-2"> {{ $plan['real'] }} filled out of  <b> {{ $plan['plan'] }} </b> </p>
+                            <p class="pt-2">
+                                <span>
+                                    {{ $plan['real'] }} filled out of  <b> {{ $plan['plan'] }} </b>
+                                </span>
+                                <br>
+                                <span class="pt-2 text-muted"> {{ $plan['plan_percent'] }}% </span>
+                            </p>
+
                             <div class="progress" style="height: 2rem">
                                 <div
                                     @if ($plan['is_completed'] && $plan['real'] === $plan['plan'])
@@ -198,7 +209,11 @@
             <div class="rowbg-white p-3">
                 <div class="row h2 text-muted">
                     <div class="col text-start"> ◇ Temporary expenses </div>
-                    <div class="col text-end"> {{ number_format($expenseCategories['temporary'], 0, null, ' ') }} ¤ </div>
+                    <div class="col text-end">
+                        {{ number_format($expenseCategories['temporary'], 0, null, ' ') }} ¤ 
+                        |
+                        {{ number_format($expenseCategories['temporaryPercent'], 0, null, ' ') }}%
+                    </div>
                 </div>
                 <div class="row"> <hr> </div>
             </div>
@@ -221,7 +236,13 @@
                                 {{ round($plan['plan'] * 100 / ($monthPlanMoney == 0 ? 1 : $monthPlanMoney)) }} %
                             @endif
                         </span>
-                        <p class="pt-2"> {{ $plan['real'] }} filled out of  <b> {{ $plan['plan'] }} </b> </p>
+                        <p class="pt-2">
+                            <span>
+                                {{ $plan['real'] }} filled out of  <b> {{ $plan['plan'] }} </b>
+                            </span>
+                            <br>
+                            <span class="pt-2 text-muted"> {{ $plan['plan_percent'] }}% </span>
+                        </p>
                         <div class="progress" style="height: 2rem">
                             <div
                                 @if ($plan['is_completed'] && $plan['real'] === $plan['plan'])

@@ -32,6 +32,11 @@ class PlansView
         $categoriesMap = self::getCategories();
 
         foreach ($plans as $plan) {
+            $monthPlanMoney += $plan->getPlan();
+            $monthRealMoney += $plan->getReal();
+        }
+
+        foreach ($plans as $plan) {
             // TODO Dont use external functions for get data
             $category = Category::findOrFail($plan->getCategoryId());
 
@@ -45,12 +50,10 @@ class PlansView
                 "desc" => $plan->getDesc(),
                 "category_emoji" => $category->emoji,
                 "is_completed" => $plan->isCompleted(),
+                "plan_percent" => round($plan->getPlan() * 100 / $monthPlanMoney, 1),
             ];
             
             $category = Category::findOrFail($plan->getCategoryId());
-
-            $monthPlanMoney += $plan->getPlan();
-            $monthRealMoney += $plan->getReal();
 
             $monthRealByPlanMoney += $plan->getReal() > $plan->getPlan()
                 ? $plan->getPlan()
@@ -98,7 +101,9 @@ class PlansView
 
             'expenseCategories' => [
                 'temporary' => $expenseTemporaryMoney,
+                'temporaryPercent' => round($expenseTemporaryMoney * 100 / $monthPlanMoney),
                 'basic' => $monthPlanMoney - $expenseTemporaryMoney,
+                'basicPercent' => round(($monthPlanMoney - $expenseTemporaryMoney) * 100 / $monthPlanMoney),
                 'unplanned' => $expenseUnplannedMoney,
             ],
 
