@@ -23,7 +23,7 @@ class PlansView
         $monthRealMoney = 0;
         $monthRealByPlanMoney = 0;
 
-         $date = self::getDate($specifyMonthNumber, $specifyYearNumber);
+        $date = self::getDate($specifyMonthNumber, $specifyYearNumber);
 
         // TODO Move to categories system (or types?)
         $expenseTemporaryMoney = 0;
@@ -71,11 +71,26 @@ class PlansView
             }
         }
 
+        $previousDate = $date->modify('-1 month');
+        $nextDate = $date->modify('+1 month');
+
         $data = [
             'plans' => $plansData,
 
             'currentMonthName' => $date->format("F"),
+            'currentMonthNumber' => $date->format('m'),
             'currentYear' => $date->format('Y'),
+
+            'dates' => [
+                'previous' => [
+                    'year' => $previousDate->format('Y'),
+                    'month' => $previousDate->format('m'),
+                ],
+                'next' => [
+                    'year' => $nextDate->format('Y'),
+                    'month' => $nextDate->format('m'),
+                ],
+            ],
 
             'monthPlanMoney' => $monthPlanMoney,
             'monthRealMoney' => $monthRealMoney,

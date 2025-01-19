@@ -1,5 +1,13 @@
 @include('common/head')
 
+<style>
+    .adaptive-heading {
+      white-space: nowrap; /* Запрещает перенос строки */
+      overflow: hidden;    /* Скрывает текст, выходящий за пределы */
+      text-overflow: ellipsis; /* Добавляет многоточие, если текст обрезается */
+    }
+  </style>
+
 <body class="bg-dark text-light">
     @include('menu')
     <div class="row px-5 pt-3">
@@ -18,25 +26,25 @@
                             <span class="h2" title="Total spent"> <b> {{ number_format($monthRealMoney, 0, null, ' ') }} 🪙 </b> </span>
                         </div>
                     </div>
-                    <div class="row text-muted">
+                    <div class="row text-light border-bottom border-secondary">
                         <div class="col-1 text-start">
-                            <span class="h3"> P </span>
+                            <span class="h5"> Plan </span>
                         </div>
                         <div class="col">
-                            <span class="h3" title="Planned expenses"> {{ number_format($monthPlanMoney, 0, null, ' ') }} ¤ </span>
+                            <span class="h5" title="Planned expenses"> {{ number_format($monthPlanMoney, 0, null, ' ') }} ¤ </span>
+                        </div>
+                    </div>
+                    <div class="row text-muted border-bottom border-secondary">
+                        <div class="col-1 text-start">
+                            <span class="h5"> With&nbsp;plan </span>
+                        </div>
+                        <div class="col">
+                            <span class="h5 text-muted" title="Spent within plan"> {{ number_format($monthRealByPlanMoney, 0, null, ' ') }} ¤ </span>
                         </div>
                     </div>
                     <div class="row text-muted">
                         <div class="col-1 text-start">
-                            <span class="h3"> W </span>
-                        </div>
-                        <div class="col">
-                            <span class="h4 text-muted" title="Spent within plan"> {{ number_format($monthRealByPlanMoney, 0, null, ' ') }} ¤ </span>
-                        </div>
-                    </div>
-                    <div class="row text-muted">
-                        <div class="col-1 text-start">
-                            <span class="h5"> O </span>
+                            <span class="h5"> Without&nbsp;plan </span>
                         </div>
                         <div class="col">
                             <span class="h5 text-muted" title="Spent outside of plan"> {{ number_format($monthRealMoney - $monthRealByPlanMoney, 0, null, ' ') }} ¤ </span>
@@ -97,10 +105,10 @@
                     </div>
                     <div class="row">
                         <div class="col p-0 m-1">
-                            <a class="btn btn-sm w-100 btn-secondary" href="" title="Prev month"> 🠜 </a>
+                            <a class="btn btn-sm w-100 btn-secondary" href="?y={{ $dates['previous']['year'] }}&m={{ $dates['previous']['month'] }}" title="Prev month"> 🠜 </a>
                         </div>
                         <div class="col p-0 m-1">
-                            <a class="btn btn-sm w-100 btn-secondary" href="?m=8" title="Next month"> 🠞 </a>
+                            <a class="btn btn-sm w-100 btn-secondary" href="?y={{ $dates['next']['year'] }}&m={{ $dates['next']['month'] }}" title="Next month"> 🠞 </a>
                         </div>
                     </div>
                 </div>
@@ -113,15 +121,94 @@
                 </div>
             </div>
             @endif
+            <div class="rowbg-white p-3">
+                <div class="row h2 text-muted">
+                    <div class="col text-start"> ◆ Basic expenses </div>
+                    <div class="col text-end"> {{ number_format($expenseCategories['basic'], 0, null, ' ') }} ¤ </div>
+                </div>
+                <div class="row"> <hr> </div>
+            </div>
+            <div class="row">
+                @foreach ($plans as $plan)
+                    @if ($categoriesMap[$plan['category_id']]['isTemporary'] === false)
+                        <div class="col-12 col-sm-5 col-md-3 col-lg-2 col-xl-2 my-3 mx-3 rounded shadow border-start border-5 border-primary">
+                    
+                        <div class="adaptive-heading">
+                            <span class="h4">
+
+                                @if ($plan['category_emoji'])
+                                    {{ $plan['category_emoji'] }}
+                                @endif
+
+                                {{ $categoriesMap[$plan['category_id']]['name'] }}
+
+                                @if ($categoriesMap[$plan['category_id']]['name'] === "Foundation")
+                                    {{ round($plan['real'] * 100 / ($monthRealMoney == 0 ? 1 : $monthRealMoney)) }} % /
+                                    {{ round($plan['plan'] * 100 / ($monthPlanMoney == 0 ? 1 : $monthPlanMoney)) }} %
+                                @endif
+                            </span>
+                            <p class="pt-2"> {{ $plan['real'] }} filled out of  <b> {{ $plan['plan'] }} </b> </p>
+                            <div class="progress" style="height: 2rem">
+                                <div
+                                    @if ($plan['is_completed'] && $plan['real'] === $plan['plan'])
+                                        class="progress-bar bg-success"
+                                    @elseif ($plan['is_completed'] && $plan['real'] < $plan['plan'])
+                                        class="progress-bar bg-success"
+                                    @elseif ($plan['plan'] === 0 && $plan['real'] !== 0)
+                                        class="progress-bar bg-danger text-dark"
+                                    @elseif ($plan['real'] > $plan['plan'] && $plan['plan'] !== 0)
+                                        class="progress-bar bg-warning text-dark"
+                                    @elseif ($plan['real'] < $plan['plan'])
+                                        class="progress-bar progress-bar-striped progress-bar-animated bg-primary"
+                                    @else
+                                        class="progress-bar bg-success"
+                                    @endif
+                                    role="progressbar" style="width: {{ round($plan['real'] / ($plan['plan'] ?: 1) * 100) }}%; font-size: 1.25rem"
+                                    aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"
+                                > {{ $plan['plan'] > 0 ? round($plan['real'] / ($plan['plan'] ?: 1) * 100) : 100 }}% </div>
+
+                                @if ($plan['real'] < $plan['plan'])
+                                    <div
+                                        @if ($plan['is_completed'] && $plan['real'] < $plan['plan'])
+                                            class="progress-bar bg-secondary text-dark"
+                                        @else
+                                            class="progress-bar progress-bar-striped bg-dark text-muted"
+                                        @endif
+                                        role="progressbar"
+                                        style="width: {{ 100 - round(($plan['real'] ?:1) / ($plan['plan'] ?: 1) * 100) }}%;font-size: 1.25rem;"
+                                    > {{ 100 - round($plan['real'] / ($plan['plan'] ?: 1) * 100) }}% </div>
+                                @elseif ($plan['real'] === $plan['plan'] && $plan['plan'] === 0)
+                                    <div
+                                        class="progress-bar bg-secondary"
+                                        style="width: 100%"
+                                    ></div>
+                                @endif
+                            </div>
+                            <div class="py-3">
+                                <a href="{{ route('plans-edit', ['id' => $plan['id']]) }}" class="btn btn-muted w-100 border border-secondary text-secondary"> <img src="{{ asset('img/pencil-fill.svg') }}"> Редактировать </a>
+                            </div>
+                            @if ($plan['desc'])
+                                <div><pre class="w-100 mt-2">{{ $plan['desc'] }}</pre></div>
+                            @endif                        
+                        </div>
+                    </div>
+                    @endif
+                @endforeach
+            </div>
+            <div class="rowbg-white p-3">
+                <div class="row h2 text-muted">
+                    <div class="col text-start"> ◇ Temporary expenses </div>
+                    <div class="col text-end"> {{ number_format($expenseCategories['temporary'], 0, null, ' ') }} ¤ </div>
+                </div>
+                <div class="row"> <hr> </div>
+            </div>
             <div class="row">
             @foreach ($plans as $plan)
-                @if ($categoriesMap[$plan['category_id']]['isTemporary'] === false)
-                    <div class="col-12 col-sm-5 col-md-3 col-lg-2 col-xl-2 my-3 mx-3 rounded shadow border-start border-5 border-primary">
-                @else
+                @if ($categoriesMap[$plan['category_id']]['isTemporary'] === true)
                     <div class="col-12 col-sm-5 col-md-3 col-lg-2 col-xl-2 my-3 mx-3 rounded shadow border-start border-5 border-secondary">
-                @endif
-                    <div>
-                        <span class="h3">
+                
+                    <div class="adaptive-heading">
+                        <span class="h4">
 
                             @if ($plan['category_emoji'])
                                 {{ $plan['category_emoji'] }}
@@ -135,13 +222,13 @@
                             @endif
                         </span>
                         <p class="pt-2"> {{ $plan['real'] }} filled out of  <b> {{ $plan['plan'] }} </b> </p>
-                        <div class="progress">
+                        <div class="progress" style="height: 2rem">
                             <div
                                 @if ($plan['is_completed'] && $plan['real'] === $plan['plan'])
                                     class="progress-bar bg-success"
                                 @elseif ($plan['is_completed'] && $plan['real'] < $plan['plan'])
                                     class="progress-bar bg-success"
-                                @elseif ($plan['plan'] === 0)
+                                @elseif ($plan['plan'] === 0 && $plan['real'] !== 0)
                                     class="progress-bar bg-danger text-dark"
                                 @elseif ($plan['real'] > $plan['plan'] && $plan['plan'] !== 0)
                                     class="progress-bar bg-warning text-dark"
@@ -150,34 +237,36 @@
                                 @else
                                     class="progress-bar bg-success"
                                 @endif
-                                role="progressbar" style="width: {{ round(($plan['real'] ?:1) / ($plan['plan'] ?: 1) * 100) }}%"
+                                role="progressbar" style="width: {{ round($plan['real'] / ($plan['plan'] ?: 1) * 100) }}%; font-size: 1.25rem"
                                 aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"
-                            > {{ $plan['plan'] > 0 ? round(($plan['real'] ?:1) / ($plan['plan'] ?: 1) * 100) : 100 }}% </div>
-                        
-                            @if ($plan['is_completed'] && $plan['real'] < $plan['plan'])
-                                
-                            @endif
+                            > {{ $plan['plan'] > 0 ? round($plan['real'] / ($plan['plan'] ?: 1) * 100) : 100 }}% </div>
 
                             @if ($plan['real'] < $plan['plan'])
                                 <div
                                     @if ($plan['is_completed'] && $plan['real'] < $plan['plan'])
-                                        class="progress-bar bg-secondary"
+                                        class="progress-bar bg-secondary text-dark"
                                     @else
-                                        class="progress-bar progress-bar-striped bg-dark"
+                                        class="progress-bar progress-bar-striped bg-dark text-muted"
                                     @endif
                                     role="progressbar"
-                                    style="width: {{ 100 - round(($plan['real'] ?:1) / ($plan['plan'] ?: 1) * 100) }}%"
-                                > {{ 100 - round(($plan['real'] ?:1) / ($plan['plan'] ?: 1) * 100) }}% </div>
+                                    style="width: {{ 100 - round(($plan['real'] ?:1) / ($plan['plan'] ?: 1) * 100) }}%;font-size: 1.25rem;"
+                                > {{ 100 - round($plan['real'] / ($plan['plan'] ?: 1) * 100) }}% </div>
+                            @elseif ($plan['real'] === $plan['plan'] && $plan['plan'] === 0)
+                                <div
+                                    class="progress-bar bg-secondary"
+                                    style="width: 100%"
+                                ></div>
                             @endif
+                        </div>
+                        <div class="py-3">
+                            <a href="{{ route('plans-edit', ['id' => $plan['id']]) }}" class="btn btn-muted w-100 border border-secondary text-secondary"> <img src="{{ asset('img/pencil-fill.svg') }}"> Редактировать </a>
                         </div>
                         @if ($plan['desc'])
                             <div><pre class="w-100 mt-2">{{ $plan['desc'] }}</pre></div>
                         @endif                        
                     </div>
-                    <div>
-                        <a href="{{ route('plans-edit', ['id' => $plan['id']]) }}" class="btn btn-secondary"> <img src="{{ asset('img/pencil-fill.svg') }}"> </a>
-                    </div>
                 </div>
+                @endif
             @endforeach
             </div>
         </div>
