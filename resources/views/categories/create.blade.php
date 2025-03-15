@@ -1,6 +1,6 @@
 @include('common/head')
 
-<body>
+<body class="bg-dark text-light">
     @include('menu')
     <div class="row px-5 pt-3">
         <div class="col col-xxl"> </div>
@@ -8,13 +8,13 @@
             <div class="">
                 <h1> New category </h1>
             </div>
-            <div class="mt-5 p-2 text-gray bg-white rounded shadow">
+            <div class="mt-5 p-2 text-gray rounded shadow">
                 <form action="store" method="POST">
                     @csrf
                     <div class="row mb-3">
                         <div class="col-12 col-sm">
                             <label for="name" class="form-label"> Name </label>
-                            <input type="text" class="form-control" id="name" name="name" required>
+                            <input type="text" class="form-control bg-secondary" id="name" name="name" required>
                         </div>
                     </div>
                     <div class="row">

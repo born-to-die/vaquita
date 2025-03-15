@@ -21,7 +21,7 @@
                                 <p class="h3"> {{ $category['name'] }} </p>
                             </div>
                             <div class="col text-end">
-                                <a href="{{ route('categories-edit', $category->id) }}" class="btn btn-danger"> <img src="{{ asset('img/trash3.svg') }}"> </a>
+                                {{-- <a href="{{ route('categories-edit', $category->id) }}" class="btn btn-danger"> <img src="{{ asset('img/trash3.svg') }}"> </a> --}}
                                 <a href="{{ route('categories-edit', $category->id) }}" class="btn btn-secondary"> <img src="{{ asset('img/pencil-fill.svg') }}"> </a>
                             </div>
                         </div>

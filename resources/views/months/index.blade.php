@@ -1,6 +1,6 @@
 @include('common/head')
 
-<body>
+<body class="bg-dark text-light">
     @include('menu')
     <div class="row px-5 pt-3">
         <div class="col col-xxl"> </div>
@@ -14,7 +14,7 @@
                 </div>
             </div>
             @foreach ($months as $month)
-                <div class="mt-3 p-2 text-gray bg-white rounded shadow">
+                <div class="mt-3 p-2 text-gray rounded shadow">
                 
                     <div class="row">
                         <div class="col">
@@ -33,7 +33,7 @@
                             <div> Rate: {{ $month['realForMonth'] }} from {{ $month['planForMonth'] }}</div>
                         </div>
                         <div class="col text-end">
-                            <a class="btn btn-secondary" href="{{ route('plans') }}?m={{ $month['month'] }} ">
+                            <a class="btn btn-secondary" href="{{ route('plans') }}?m={{ $month['month'] }}&y={{ $month['year'] }}">
                                 View plans
                             </a>
                         </div>
