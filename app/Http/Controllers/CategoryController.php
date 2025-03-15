@@ -53,13 +53,21 @@ class CategoryController extends BaseController
     public function edit(int $id)
     {
         $category = $this->getCategoryUseCase->get($id);
-        return view('categories/edit', ["name" => $category->getName()]);
+
+        return view(
+            'categories/edit',
+            [
+                "name" => $category->name,
+                "isTemp" => $category->isTemp,
+            ],
+        );
     }
 
     public function update(Request $request, int $id)
     {
         $data = [
             'name' => $request->name,
+            'is_temp' => (int) (! $request->is_temp),
         ];
 
         $this->updateCategoryUseCase->update($id, $data);

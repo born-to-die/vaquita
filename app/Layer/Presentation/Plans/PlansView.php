@@ -101,9 +101,9 @@ class PlansView
 
             'expenseCategories' => [
                 'temporary' => $expenseTemporaryMoney,
-                'temporaryPercent' => round($expenseTemporaryMoney * 100 / $monthPlanMoney),
+                'temporaryPercent' => round($expenseTemporaryMoney * 100 / ($monthPlanMoney !== 0 ? $monthPlanMoney : 1)),
                 'basic' => $monthPlanMoney - $expenseTemporaryMoney,
-                'basicPercent' => round(($monthPlanMoney - $expenseTemporaryMoney) * 100 / $monthPlanMoney),
+                'basicPercent' => round(($monthPlanMoney - $expenseTemporaryMoney) * 100 / ($monthPlanMoney !== 0 ? $monthPlanMoney : 1)),
                 'unplanned' => $expenseUnplannedMoney,
             ],
 

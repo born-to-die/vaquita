@@ -1,6 +1,6 @@
 @include('common/head')
 
-<body>
+<body class="bg-dark text-light">
     @include('menu')
     <div class="row px-5 pt-3">
         <div class="col col-xxl"> </div>
@@ -8,14 +8,20 @@
             <div class="">
                 <h1> Edit category "{{ $name }}"</h1>
             </div>
-            <div class="mt-5 p-2 text-gray bg-white rounded shadow">
+            <div class="mt-5 p-2 text-gray rounded shadow">
                 <form action="update" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="row mb-3">
                         <div class="col-12 col-sm">
                             <label for="name" class="form-label"> Name </label>
-                            <input type="text" class="form-control" id="name" name="name" value="{{ $name }}" required>
+                            <input type="text" class="form-control bg-secondary text-light" id="name" name="name" value="{{ $name }}" required>
+                        </div>
+                    </div>
+                    <div class="row m-1">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="is_temp" name="is_temp" {{ $isTemp === false ? "checked" : "" }}>
+                            <label class="form-check-label" for="is_temp">Required</label>
                         </div>
                     </div>
                     <div class="row">

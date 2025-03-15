@@ -19,7 +19,8 @@ class GetCategoryAction implements GetCategoryInterface
     {
         return new CategoryEntity(
             $category->id,
-            $category->name
+            $category->name,
+            $category->is_temp,
         );
     }
 }
