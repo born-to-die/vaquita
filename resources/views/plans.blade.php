@@ -196,7 +196,7 @@
                                 @endif
                             </div>
                             <div class="py-3">
-                                <a href="{{ route('plans-edit', ['id' => $plan['id']]) }}" class="btn btn-muted w-100 border border-secondary text-secondary"> <img src="{{ asset('img/pencil-fill.svg') }}"> Редактировать </a>
+                                <a href="{{ route('plans-edit', ['id' => $plan['id']]) }}" class="btn btn-muted w-100 border border-secondary text-secondary"> <img src="{{ asset('img/pencil-fill.svg') }}"> Edit </a>
                             </div>
                             @if ($plan['desc'])
                                 <div><pre class="w-100 mt-2">{{ $plan['desc'] }}</pre></div>
@@ -280,7 +280,7 @@
                             @endif
                         </div>
                         <div class="py-3">
-                            <a href="{{ route('plans-edit', ['id' => $plan['id']]) }}" class="btn btn-muted w-100 border border-secondary text-secondary"> <img src="{{ asset('img/pencil-fill.svg') }}"> Редактировать </a>
+                            <a href="{{ route('plans-edit', ['id' => $plan['id']]) }}" class="btn btn-muted w-100 border border-secondary text-secondary"> <img src="{{ asset('img/pencil-fill.svg') }}"> Edit </a>
                         </div>
                         @if ($plan['desc'])
                             <div><pre class="w-100 mt-2">{{ $plan['desc'] }}</pre></div>

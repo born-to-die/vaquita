@@ -1,6 +1,6 @@
 @include('common/head')
 
-<body>
+<body class="bg-dark text-light">
     @include('menu')
     <div class="row px-5 pt-3 bg-dark text-light">
         <div class="col col-xxl"> </div>
