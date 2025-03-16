@@ -44,9 +44,9 @@
                                 <option disabled> Select category </option>
                                 @foreach ($categories as $category)
                                     @if ($category->id == $plan->category_id)
-                                        <option value="{{ $category->id }}" selected> {{ $category->name }} </option>
+                                        <option value="{{ $category->id }}" selected> {{ $category->emoji }} {{ $category->name }} </option>
                                     @else
-                                        <option value="{{ $category->id }}"> {{ $category->name }} </option>
+                                        <option value="{{ $category->id }}"> {{ $category->emoji }} {{ $category->name }} </option>
                                     @endif
                                 @endforeach
                               </select>

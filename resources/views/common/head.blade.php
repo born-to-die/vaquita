@@ -16,5 +16,6 @@
         crossorigin="anonymous"
     ></script>
 
-    
+    <script src="{{ asset('js/browser.js') }}"></script>
+
 </head>

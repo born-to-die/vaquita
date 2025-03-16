@@ -21,7 +21,7 @@ class PlanEditView
             'users' => User::select('id', 'name', 'email')->get(),
             'months' => Month::select('id', 'year', 'month')->get(),
             'monthsNames' => MonthEnum::MONTHS_NAME,
-            'categories' => Category::select('id', 'name')->get(),
+            'categories' => Category::select('id', 'name', 'emoji')->get(),
             'missingAmount' => $plan->getPlan() - $plan->getReal(),
             'is_completed' => $plan->isCompleted(),
         ];

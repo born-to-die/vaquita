@@ -59,6 +59,7 @@ class CategoryController extends BaseController
             [
                 "name" => $category->name,
                 "isTemp" => $category->isTemp,
+                "emoji" => $category->emoji,
             ],
         );
     }
@@ -68,6 +69,7 @@ class CategoryController extends BaseController
         $data = [
             'name' => $request->name,
             'is_temp' => (int) (! $request->is_temp),
+            'emoji' => $request->emoji,
         ];
 
         $this->updateCategoryUseCase->update($id, $data);

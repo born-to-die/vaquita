@@ -21,6 +21,7 @@ class GetCategoryAction implements GetCategoryInterface
             $category->id,
             $category->name,
             $category->is_temp,
+            $category->emoji,
         );
     }
 }

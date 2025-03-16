@@ -18,7 +18,7 @@
                     <div class="col p-2 text-gray rounded shadow">
                         <div class="row">
                             <div class="col">
-                                <p class="h3"> {{ $category['name'] }} </p>
+                                <p class="h3"> {{ $category['emoji'] }} {{ $category['name'] }} </p>
                             </div>
                             <div class="col text-end">
                                 {{-- <a href="{{ route('categories-edit', $category->id) }}" class="btn btn-danger"> <img src="{{ asset('img/trash3.svg') }}"> </a> --}}

@@ -8,6 +8,7 @@ class CategoryEntity
         readonly public int $id,
         readonly public string $name,
         readonly public bool $isTemp,
+        readonly public ?string $emoji,
     ) {
     }
 }
